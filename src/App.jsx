@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Guitar } from "./components/Guitar"
 import Header from "./components/Header"
 
@@ -6,8 +6,17 @@ import { db } from "./data/db"  //Importa la base de datos
 
 function App() {
 
+  const initialCart = () => {
+    const localStorageCart = localStorage.getItem('cart')
+    return localStorageCart ? JSON.parse(localStorageCart) : []
+  }  //Setea el parse y sino existe es la primera vez que se usa y establece en vacio
+
   const [data, setData] =  useState(db)  //Declarando el data en state
-  const [cart, setCart] = useState([]) //Declarando el carrito como arreglo por amlacenar mas objetos
+  const [cart, setCart] = useState(initialCart) //Declarando el carrito como arreglo por amlacenar mas objetos
+
+  useEffect(() => {       //Guarda en la función cada que cart es modificado
+    localStorage.setItem('cart', JSON.stringify(cart))  //Usar stringigy para guardar como string 
+  },[cart])     //Revisa si cart ha sido cambiado
 
   function addToCart(item){     //Función añadir cart
 
@@ -24,13 +33,52 @@ function App() {
       item.quantity = 1  //añade un parametro que inicia en 1 el no. de items
       setCart([...cart, item])    //Añade al array pasado, el nuevo objeto
     }
+  }
 
+  function removeFromCart(id){    //Función para eliminar el item de carrito
+    console.log("DELETING ", id)
+    setCart(cart.filter(guitar => guitar.id !== id))
+  }
 
+  function increaseQuantity(id){
+    const updateCart = cart.map( (item) =>{
+      if(item.id === id && item.quantity < 10){
+        return {               //Regresa
+          ...item,             //Los items completos
+          quantity: item.quantity + 1  //se modifica solo el quiantity
+        }
+      }
+      return item       //Regresa el item completo
+    })
+    setCart(updateCart)   //Hace set del Cart
+  }
+
+  function decreaseQuantity(id){
+    const updateCart = cart.map( (item) =>{
+      if(item.id === id && item.quantity > 1){
+        return {               //Regresa
+          ...item,             //Los items completos
+          quantity: item.quantity - 1  //se modifica solo el quiantity
+        }
+      }
+      return item       //Regresa el item completo
+    })
+    setCart(updateCart)   //Hace set del Cart
+  }
+
+  function clearCart(){   //Reinicia el carrito
+    setCart([])
   }
 
   return (
     <>
-      <Header cart = {cart} />
+      <Header 
+        cart = {cart}
+        removeFromCart = {removeFromCart} 
+        increaseQuantity = {increaseQuantity}
+        decreaseQuantity = {decreaseQuantity}
+        clearCart = {clearCart}
+      />
 
         <main className="container-xl mt-5">
             <h2 className="text-center">Nuestra Colección</h2>

@@ -1,7 +1,7 @@
 import React from 'react'
 
-export const HeaderCart = ({guitar}) => {
-    const {name, image, price, quantity} = guitar  //Desctructuracion de guitarra
+export const HeaderCart = ({guitar, removeFromCart, increaseQuantity, decreaseQuantity}) => {
+    const {name, image, price, quantity, id} = guitar  //Desctructuracion de guitarra
 
   return (
     <tr>
@@ -16,6 +16,7 @@ export const HeaderCart = ({guitar}) => {
             <button
                 type="button"
                 className="btn btn-dark"
+                onClick={() => decreaseQuantity(id)}
             >
                 -
             </button>
@@ -23,6 +24,7 @@ export const HeaderCart = ({guitar}) => {
             <button
                 type="button"
                 className="btn btn-dark"
+                onClick={() => increaseQuantity(id)}
             >
                 +
             </button>
@@ -31,6 +33,7 @@ export const HeaderCart = ({guitar}) => {
             <button
                 className="btn btn-danger"
                 type="button"
+                onClick={() => removeFromCart(id)}
             >
                 X
             </button>
