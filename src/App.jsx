@@ -6,11 +6,31 @@ import { db } from "./data/db"  //Importa la base de datos
 
 function App() {
 
-  const [data, setData] =  useState(db)  //Así podemos llamarlo
+  const [data, setData] =  useState(db)  //Declarando el data en state
+  const [cart, setCart] = useState([]) //Declarando el carrito como arreglo por amlacenar mas objetos
+
+  function addToCart(item){     //Función añadir cart
+
+    const itemExist = cart.findIndex((guitar) => guitar.id === item.id)  //Revisa en cada item de cart el id. Guarda los items que no se repiten
+
+    if(itemExist >= 0){ //Revisa que exista, si es así no hace nada, no añade
+      console.log("ALREADY IN CART...")
+      const updateCart = [...cart]
+      updateCart[itemExist].quantity++     //Aumenta en uno la cantidad
+      setCart(updateCart)       //Esto se hace para no mutar cart directamente
+
+    } else{       //Añade el itema al arreglo
+      console.log("ADDING...")
+      item.quantity = 1  //añade un parametro que inicia en 1 el no. de items
+      setCart([...cart, item])    //Añade al array pasado, el nuevo objeto
+    }
+
+
+  }
 
   return (
     <>
-      <Header />
+      <Header cart = {cart} />
 
         <main className="container-xl mt-5">
             <h2 className="text-center">Nuestra Colección</h2>
@@ -20,6 +40,9 @@ function App() {
                   <Guitar
                     key = {guitar.id}
                     guitar = {guitar}
+
+                    setCart = {setCart}
+                    addToCart = {addToCart}
                   />
                 ))}
                 
