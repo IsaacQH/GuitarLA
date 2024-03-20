@@ -1,6 +1,14 @@
+
+import { useMemo } from "react"  //Hook de useMemo
+
 import { HeaderCart } from "./HeaderCart"
 
+
 const Header = ({cart}) => {
+
+    const isEmpty = useMemo(() => cart.length === 0, [cart]);
+    const cartTotal = useMemo(() => cart.reduce((total, item) => total + (item.price * item.quantity), 0), [cart])   //Método que accede al item de cart indifivual y puede almacenar en total, total = 0
+
   return (
     <header className="py-5 header">
     <div className="container-xl">
@@ -18,7 +26,7 @@ const Header = ({cart}) => {
 
                     <div id="carrito" className="bg-white p-3">
                         
-                        {cart.length === 0 ? (
+                        {isEmpty ? (
                         <p className="text-center">El carrito esta vacio</p>
                         ) : (    
                         <table className="w-100 table">
@@ -42,7 +50,7 @@ const Header = ({cart}) => {
                     </table>
                         )}
 
-                        <p className="text-end">Total pagar: <span className="fw-bold">$899</span></p>
+                        <p className="text-end">Total pagar: <span className="fw-bold">${cartTotal}</span></p>
                         <button className="btn btn-dark w-100 mt-3 p-2">Vaciar Carrito</button>
                     </div>
                 </div>
